@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Information Security Administration - Final Prep</title>
+  <style>
+    :root {
+      --text-main: #f5f5f7;
+      --text-sec: #a1a1a6;
+      --apple-blue: #0a84ff;
+      --apple-red: #ff453a;
+      --apple-orange: #ff9f0a;
+      --apple-green: #32d74b;
+      
+      --glass-bg: rgba(30, 30, 32, 0.45);
+      --glass-card: rgba(40, 40, 44, 0.4);
+      --glass-card-hover: rgba(50, 50, 55, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-border-light: rgba(255, 255, 255, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #000;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(60, 30, 120, 0.5) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(20, 60, 110, 0.5) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(90, 30, 60, 0.3) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(20, 80, 50, 0.4) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(100, 50, 20, 0.4) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 3vw 2vw;
+      line-height: 1.5;
+    }
+
+    .wrap { 
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 36px;
+      background: var(--glass-bg);
+      border-radius: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); border: 0;
+    }
+
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+    .top-bar h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+
+    .legend { 
+      display: flex; gap: 14px; flex-wrap: wrap; 
+      background: rgba(20, 20, 22, 0.4); 
+      padding: 10px 18px; border-radius: 16px; 
+      box-shadow: inset 0 0 0 1px var(--glass-border); 
+      backdrop-filter: blur(10px); 
+      -webkit-backdrop-filter: blur(10px); 
+    }
+    .leg { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-main); }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-red { background: var(--apple-red); box-shadow: 0 0 8px rgba(255,69,58,0.6); }
+    .dot-amber { background: var(--apple-orange); box-shadow: 0 0 8px rgba(255,159,10,0.6); }
+    .dot-green { background: var(--apple-green); box-shadow: 0 0 8px rgba(50,215,75,0.6); }
+
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+    .sum-card { 
+      background: var(--glass-card); 
+      border-radius: 24px; 
+      padding: 24px; 
+      text-align: center; 
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 0 0 1px var(--glass-border);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .sum-card:hover { 
+      transform: translateY(-4px); 
+      background: var(--glass-card-hover);
+    }
+    .sum-num { font-size: 40px; font-weight: 700; color: var(--text-main); line-height: 1.1; letter-spacing: -1px; transition: color 0.3s; }
+    .sum-lbl { font-size: 13px; font-weight: 600; color: var(--text-sec); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+    .tab-row { 
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; 
+      background: rgba(20, 20, 22, 0.4);
+      padding: 6px;
+      border-radius: 16px;
+      box-shadow: inset 0 0 0 1px var(--glass-border);
+      width: fit-content;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .tab { 
+      padding: 10px 20px; 
+      border-radius: 12px; 
+      font-size: 14px; 
+      font-weight: 600;
+      cursor: pointer; 
+      color: var(--text-sec); 
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .tab:hover { color: var(--text-main); }
+    .tab.active { 
+      background: rgba(255, 255, 255, 0.15); 
+      color: var(--text-main); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .day-card { 
+      background: var(--glass-card); 
+      border-radius: 24px; 
+      overflow: hidden; 
+      margin-bottom: 16px; 
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: inset 0 0 0 1px var(--glass-border), 0 4px 12px rgba(0,0,0,0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .day-card:hover {
+      box-shadow: inset 0 0 0 1px var(--glass-border-light), 0 12px 30px rgba(0,0,0,0.3);
+      background: var(--glass-card-hover);
+    }
+    .day-header { display: flex; align-items: center; justify-content: space-between; padding: 22px 26px; cursor: pointer; }
+    .day-left { display: flex; align-items: center; gap: 18px; }
+    .day-num { 
+      width: 48px; height: 48px; border-radius: 16px; 
+      display: flex; align-items: center; justify-content: center; 
+      font-size: 16px; font-weight: 700; flex-shrink: 0; 
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: var(--text-main);
+    }
+    .day-num i { font-style: normal; }
+    .day-title { font-size: 18px; font-weight: 600; color: var(--text-main); letter-spacing: -0.3px; }
+    .day-sub { font-size: 14px; color: var(--text-sec); margin-top: 4px; font-weight: 500; }
+    .day-meta { display: flex; align-items: center; gap: 14px; }
+    .hrs { font-size: 13px; font-weight: 600; background: rgba(0,0,0,0.3); padding: 6px 14px; border-radius: 20px; color: var(--text-sec); white-space: nowrap; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+    .chevron { 
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--text-main); transition: transform 0.3s; 
+    }
+    .chevron.open { transform: rotate(180deg); }
+    
+    .day-body { padding: 0 26px 26px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: none; }
+    
+    .topic-list { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+    
+    /* Interactive Checklist Items */
+    .topic-item { 
+      display: flex; align-items: flex-start; gap: 16px; 
+      background: rgba(20, 20, 22, 0.4);
+      padding: 18px;
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 1px var(--glass-border);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .topic-item:hover { background: rgba(40, 40, 45, 0.6); }
+
+    .topic-item.completed {
+      opacity: 0.55;
+      background: rgba(10, 10, 12, 0.3);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+    .topic-item.completed .topic-name,
+    .topic-item.completed .topic-hint {
+      text-decoration: line-through;
+      color: var(--text-sec);
+    }
+
+    .checkbox-wrapper { display: flex; align-items: flex-start; justify-content: center; margin-top: 4px; border-radius: 50%;}
+    .topic-checkbox { display: none; }
+    .custom-checkbox {
+      width: 24px; height: 24px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .topic-item:hover .custom-checkbox {
+      border-color: rgba(255,255,255,0.6);
+    }
+    .topic-checkbox:checked + .custom-checkbox {
+      background: var(--apple-green);
+      border-color: var(--apple-green);
+      box-shadow: 0 0 10px rgba(50,215,75,0.4);
+    }
+    .topic-checkbox:checked + .custom-checkbox::after {
+      content: "";
+      width: 6px; height: 11px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-bottom: 2px;
+    }
+    
+    .prio-bar { width: 5px; border-radius: 5px; min-height: 52px; flex-shrink: 0; margin-top: 4px; }
+    .prio-high { background: var(--apple-red); box-shadow: 0 0 12px rgba(255,69,58,0.5); }
+    .prio-med { background: var(--apple-orange); box-shadow: 0 0 12px rgba(255,159,10,0.5); }
+    .prio-low { background: var(--apple-green); box-shadow: 0 0 12px rgba(50,215,75,0.5); }
+    
+    .topic-content { flex: 1; }
+    .topic-name { font-size: 16px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; letter-spacing: -0.2px; transition: color 0.3s; }
+    .topic-hint { font-size: 14px; color: var(--text-sec); line-height: 1.5; margin-bottom: 12px; transition: color 0.3s; }
+    
+    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 10px; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); box-shadow: inset 0 0 0 1px var(--glass-border-light); }
+    .b-exam { background: rgba(255, 69, 58, 0.15); color: #ff6961; border-color: rgba(255, 69, 58, 0.3); }
+    .b-ppt { background: rgba(94, 92, 230, 0.15); color: #7d7aff; border-color: rgba(94, 92, 230, 0.3); }
+    .b-note { background: rgba(50, 215, 75, 0.15); color: #32d74b; border-color: rgba(50, 215, 75, 0.3); }
+    .b-unit { background: rgba(10, 132, 255, 0.15); color: #64d2ff; border-color: rgba(10, 132, 255, 0.3); }
+    .b-skim { background: rgba(142, 142, 147, 0.15); color: #d1d1d6; border-color: rgba(142, 142, 147, 0.3); }
+    .b-red { background: rgba(255, 69, 58, 0.2); color: #ff6961; border-color: rgba(255, 69, 58, 0.5); }
+    
+    .tip-box { 
+      margin-top: 24px; 
+      background: linear-gradient(135deg, rgba(60, 90, 150, 0.3), rgba(30, 40, 70, 0.3)); 
+      border-radius: 20px; 
+      padding: 20px 24px; 
+      font-size: 14px; 
+      color: var(--text-main); 
+      line-height: 1.6;
+      box-shadow: inset 0 0 0 1px rgba(100, 150, 255, 0.2), 0 4px 12px rgba(0,0,0,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .tip-box::before {
+      content: "💡"; position: absolute; right: 24px; top: 20px; font-size: 28px; opacity: 0.7; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    }
+    .tip-label { font-weight: 700; color: #64d2ff; display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+    
+    .progress-bar-wrap { background: rgba(255,255,255,0.12); border-radius: 8px; height: 8px; margin-top: 20px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); }
+    .progress-fill { height: 8px; border-radius: 8px; transition: width 1.2s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: inset 0 1px 1px rgba(255,255,255,0.3); }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body { padding: 16px; }
+      .wrap { padding: 20px; border-radius: 24px; }
+      .top-bar { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+      .top-bar h2 { font-size: 22px; }
+      .summary-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+      .sum-card { padding: 20px; }
+      .sum-num { font-size: 32px; }
+      .tab-row { width: 100%; justify-content: center; }
+      .tab { flex: 1; text-align: center; padding: 10px; }
+      .day-card { border-radius: 20px; }
+      .day-header { padding: 16px 20px; }
+      .day-left { gap: 14px; }
+      .day-num { width: 40px; height: 40px; font-size: 14px; border-radius: 12px; }
+      .day-title { font-size: 16px; }
+      .hrs { font-size: 12px; padding: 6px 12px; }
+      .chevron { width: 28px; height: 28px; }
+      .day-body { padding: 0 20px 20px; }
+      .topic-item { padding: 16px; flex-direction: column; gap: 12px; border-radius: 16px; }
+      .prio-bar { min-height: 4px; height: 4px; width: 48px; margin-bottom: 4px; }
+      .topic-name { font-size: 15px; }
+    }
+    
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .wrap { padding: 16px; border-radius: 20px; }
+      .top-bar h2 { font-size: 20px; }
+      .legend { padding: 12px; gap: 10px; }
+      .sum-card { padding: 16px; }
+      .sum-num { font-size: 28px; }
+      .day-header { padding: 14px 16px; }
+      .day-left { gap: 12px; }
+      .day-num { width: 36px; height: 36px; font-size: 14px; }
+      .day-title { font-size: 15px; }
+      .day-sub { font-size: 13px; }
+      .hrs { display: none; }
+      .day-body { padding: 0 16px 16px; }
+      .topic-item { padding: 14px; }
+      .badge { font-size: 11px; padding: 4px 10px; }
+      .tip-box { padding: 16px; }
+      .tip-box::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <h2 class="sr-only">Final 2-Day Exam Preparation Plan for Information Security Administration</h2>
+  <div class="top-bar">
+    <h2>Information Security Administration</h2>
+    <div class="legend">
+      <div class="leg"><div class="dot dot-red"></div> Very high</div>
+      <div class="leg"><div class="dot dot-amber"></div> High</div>
+      <div class="leg"><div class="dot dot-green"></div> Medium</div>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="sum-card"><div class="sum-num" style="color:var(--apple-green);">2</div><div class="sum-lbl">Study Days Left</div></div>
+    <div class="sum-card"><div class="sum-num" id="sum_completed_hrs" style="color:var(--apple-blue);">0</div><div class="sum-lbl">Hours Completed</div></div>
+    <div class="sum-card"><div class="sum-num" id="sum_hot_topics" style="color:var(--apple-red);">9</div><div class="sum-lbl">Hot Topics Left</div></div>
+  </div>
+
+  <div class="tab-row">
+    <div class="tab active" onclick="filterDays('all', this)">All sessions</div>
+    <div class="tab" onclick="filterDays('high', this)">Today only</div>
+    <div class="tab" onclick="filterDays('rev', this)">Tomorrow only</div>
+  </div>
+
+  <div id="days-container"></div>
+</div>
+
+<script>
+// The Master Knowledge Base
+const allTopics = [
+  { id: "t1", session: 1, name: "NAT & PAT Setup ⭐ Most Repeated", hint: "NAT vs PAT table (1-to-1 vs many-to-1). PAT uses port numbers. This appears 3 TIMES in ma'am's list!", prio: "high", estHrs: 1.5, badges: ["b-exam"], badgeLabels: ["Most repeated"] },
+  { id: "t2", session: 1, name: "Firewalls", hint: "Types: packet filtering, stateful, NGFW, WAF. Understand rules and zones.", prio: "high", estHrs: 1.0, badges: ["b-exam", "b-note"], badgeLabels: ["Exam hot topic", "Complete Notes"] },
+  { id: "t3", session: 1, name: "Login Security & Policies", hint: "MFA, password strength, account lockout, group policies.", prio: "high", estHrs: 1.0, badges: ["b-exam"], badgeLabels: ["Exam hot topic"] },
+  { id: "t4", session: 1, name: "Secure Mobile Device", hint: "Screen lock, encryption, remote wipe. Mentioned TWICE by ma'am.", prio: "med", estHrs: 0.5, badges: ["b-exam"], badgeLabels: ["Quick Win"] },
+  
+  { id: "t5", session: 2, name: "Proxy Servers — All Types", hint: "Forward, Reverse, Transparent, Anonymous, Elite, etc. You HAVE the PPT for this!", prio: "high", estHrs: 1.5, badges: ["b-exam", "b-ppt"], badgeLabels: ["Exam hot topic", "PPT available"] },
+  { id: "t6", session: 2, name: "DNS & FTP Servers", hint: "DNS (poisoning, DNSSEC, lookups) and FTP (active/passive, SFTP).", prio: "high", estHrs: 1.5, badges: ["b-exam", "b-unit"], badgeLabels: ["Exam hot topic", "Unit 5"] },
+  { id: "t7", session: 2, name: "LAN Security & Segmentation", hint: "Access control, MAC filtering, VLANs, subnetting, DMZ.", prio: "high", estHrs: 1.0, badges: ["b-exam"], badgeLabels: ["Exam hot topic"] },
+
+  { id: "t8", session: 3, name: "File Sharing & Printer Services", hint: "SMB/CIFS, permissions, sharing over LAN. Skim only.", prio: "low", estHrs: 0.5, badges: ["b-unit", "b-skim"], badgeLabels: ["Unit 4", "Skim"] },
+  { id: "t9", session: 3, name: "Client Setup & OS Applications", hint: "Desktop PC hardware, BIOS, OS installs. Skim your notes.", prio: "low", estHrs: 0.5, badges: ["b-note", "b-skim"], badgeLabels: ["Complete Notes", "Skim"] },
+  { id: "t10", session: 3, name: "Full Revision — ALL High Priority", hint: "NAT/PAT • Proxy types • Firewalls • Login policies • LAN Security", prio: "high", estHrs: 2.0, badges: ["b-exam"], badgeLabels: ["Must revise"] }
+];
+
+// LocalStorage State Management
+let appStartDate = localStorage.getItem('isa_start_date');
+if (!appStartDate) {
+  appStartDate = new Date().toDateString(); // Logs the exact day the student opened it.
+  localStorage.setItem('isa_start_date', appStartDate);
+}
+// Checks if it is visually "Tomorrow" relative to when they started
+const isTomorrow = new Date().toDateString() !== appStartDate;
+let completedTopics = JSON.parse(localStorage.getItem('isa_completed') || '{}');
+
+// Build the Sessions
+let sessionsMap = {
+  1: { num: "01", title: "Today's Core Targets", sub: "Most Repeated Exam Topics (3-4 hrs)", hrs: "3–4 hrs", textColor: "var(--apple-red)", tag: "high", progressColor: "var(--apple-red)", tip: "You only have 3-4 hours tonight! DO NOT read full notes. Focus entirely on NAT/PAT differences, Firewall types, and Login policies. These are guaranteed questions.", topics: [] },
+  2: { num: "02", title: "Tomorrow: Morning Session", sub: "Servers & LAN Security", hrs: "4 hrs", textColor: "var(--apple-blue)", tag: "rev", progressColor: "var(--apple-blue)", tip: "Knock out the Servers early. You have a full PPT on Proxy types—study all of them. Then finish LAN network segmentation.", topics: [] },
+  3: { num: "03", title: "Tomorrow: Afternoon Session", sub: "Quick Reads & Full Revision", hrs: "3-4 hrs", textColor: "var(--apple-orange)", tag: "rev", progressColor: "var(--apple-orange)", tip: "Spend 1 hour skimming Unit 1 & 4 basics. After that, spend 2-3 hours practicing writing 2-line answers for EVERYTHING to lock it into memory.", topics: [] }
+};
+
+// Populate the sessions and handle auto carry-over
+allTopics.forEach(t => {
+  let targetSession = t.session;
+  
+  // Magic: If it's officially "Tomorrow" and a Day 1 task is incomplete, move it!
+  if (isTomorrow && targetSession === 1 && !completedTopics[t.id]) {
+     targetSession = 2;
+     t.badges.push('b-red');
+     t.badgeLabels.push('Missed Yesterday');
+  }
+
+  sessionsMap[targetSession].topics.push(t);
+});
+
+// Remove empty sessions
+const days = Object.values(sessionsMap).filter(s => s.topics.length > 0);
+
+function updateSummaryTopStats() {
+  let totalHigh = allTopics.filter(t => t.prio === 'high').length;
+  let completedHigh = allTopics.filter(t => t.prio === 'high' && completedTopics[t.id]).length;
+  let leftHigh = totalHigh - completedHigh;
+  
+  let totalHrs = 0;
+  allTopics.forEach(t => {
+      if(completedTopics[t.id]) totalHrs += t.estHrs;
+  });
+
+  const sumHot = document.getElementById('sum_hot_topics');
+  sumHot.innerText = leftHigh;
+  if(leftHigh === 0) sumHot.style.color = "var(--apple-green)"; // Turn green when done!
+
+  document.getElementById('sum_completed_hrs').innerText = totalHrs;
+}
+
+function calculateProgress(session) {
+  if (session.topics.length === 0) return 100;
+  const compCount = session.topics.filter(t => completedTopics[t.id]).length;
+  return Math.round((compCount / session.topics.length) * 100);
+}
+
+function renderDays(filter) {
+  const container = document.getElementById('days-container');
+  container.innerHTML = '';
+  
+  let shown = days;
+  if (filter === 'high') shown = days.filter(d => d.tag === 'high');
+  if (filter === 'rev') shown = days.filter(d => d.tag === 'rev');
+
+  shown.forEach((d, idx) => {
+    let currentProgress = calculateProgress(d);
+    
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.id = `session_card_${d.num}`; // e.g. session_card_01
+    
+    const topicsHTML = d.topics.map(t => {
+      const isCompleted = completedTopics[t.id] || false;
+      const bars = t.badges.map((b, i) => `<span class="badge ${b}">${t.badgeLabels[i]}</span>`).join('');
+      
+      return `<label class="topic-item ${isCompleted ? 'completed' : ''}" id="item_${t.id}">
+        <div class="checkbox-wrapper">
+          <input type="checkbox" class="topic-checkbox" id="cb_${t.id}" ${isCompleted ? 'checked' : ''} onchange="toggleTopic('${t.id}', '${d.num}')" />
+          <span class="custom-checkbox"></span>
+        </div>
+        <div class="prio-bar prio-${t.prio === 'high' ? 'high' : t.prio === 'med' ? 'med' : 'low'}"></div>
+        <div class="topic-content">
+          <div class="topic-name">${t.name}</div>
+          <div class="topic-hint">${t.hint}</div>
+          <div class="badge-row">${bars}</div>
+        </div>
+      </label>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="day-header" onclick="toggleDay(this)">
+        <div class="day-left">
+          <div class="day-num" style="color:${d.textColor};"><i>${d.num}</i></div>
+          <div>
+            <div class="day-title">${d.title}</div>
+            <div class="day-sub">${d.sub}</div>
+          </div>
+        </div>
+        <div class="day-meta">
+          <span class="hrs">${d.hrs}</span>
+          <span class="chevron"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+        </div>
+      </div>
+      <div class="day-body" style="display:none;">
+        <div class="progress-bar-wrap"><div class="progress-fill" style="width:0%;background:${d.progressColor};"></div></div>
+        <div class="topic-list">${topicsHTML}</div>
+        <div class="tip-box"><span class="tip-label">Study tip</span>${d.tip}</div>
+      </div>`;
+      
+    container.appendChild(card);
+    
+    // Store target progress
+    card.dataset.progress = currentProgress;
+  });
+  
+  updateSummaryTopStats();
+}
+
+function toggleTopic(id, sessionNum) {
+  const cb = document.getElementById(`cb_${id}`);
+  const isChecked = cb.checked;
+  const topicRow = document.getElementById(`item_${id}`);
+  
+  // Persist Completion
+  completedTopics[id] = isChecked;
+  localStorage.setItem('isa_completed', JSON.stringify(completedTopics));
+  
+  // Visual Update
+  if(isChecked) {
+      topicRow.classList.add('completed');
+  } else {
+      topicRow.classList.remove('completed');
+  }
+
+  // Find parent session object to recalculate
+  let sessionObj = days.find(d => d.num === sessionNum);
+  if(sessionObj) {
+      let newProgress = calculateProgress(sessionObj);
+      let card = document.getElementById(`session_card_${sessionNum}`);
+      card.dataset.progress = newProgress;
+      
+      let pFill = card.querySelector('.progress-fill');
+      if (pFill && card.querySelector('.day-body').style.display !== 'none') {
+          pFill.style.width = newProgress + '%';
+      }
+  }
+
+  // Update top numeric stats completely globally
+  updateSummaryTopStats();
+}
+
+function toggleDay(header) {
+  const body = header.nextElementSibling;
+  const chev = header.querySelector('.chevron');
+  const card = header.parentElement;
+  
+  const isOpening = body.style.display === 'none';
+  
+  if (isOpening) {
+    body.style.display = 'block';
+    body.style.opacity = '0';
+    void body.offsetWidth;
+    body.style.transition = 'opacity 0.3s ease';
+    body.style.opacity = '1';
+    chev.classList.add('open');
+    
+    setTimeout(() => {
+      const pFill = body.querySelector('.progress-fill');
+      pFill.style.width = card.dataset.progress + '%';
+    }, 50);
+  } else {
+    body.style.opacity = '0';
+    chev.classList.remove('open');
+    setTimeout(() => {
+      body.style.display = 'none';
+      const pFill = body.querySelector('.progress-fill');
+      pFill.style.width = '0%';
+    }, 200);
+  }
+}
+
+function filterDays(filter, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderDays(filter);
+}
+
+// Initial paint
+renderDays('all');
+</script>
+</body>
+</html>
