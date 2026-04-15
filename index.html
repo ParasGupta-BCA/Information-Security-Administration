@@ -70,7 +70,7 @@
     .dot-amber { background: var(--apple-orange); box-shadow: 0 0 8px rgba(255,159,10,0.6); }
     .dot-green { background: var(--apple-green); box-shadow: 0 0 8px rgba(50,215,75,0.6); }
 
-    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
     .sum-card { 
       background: var(--glass-card); 
       border-radius: 24px; 
@@ -87,33 +87,6 @@
     }
     .sum-num { font-size: 40px; font-weight: 700; color: var(--text-main); line-height: 1.1; letter-spacing: -1px; transition: color 0.3s; }
     .sum-lbl { font-size: 13px; font-weight: 600; color: var(--text-sec); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-
-    /* Time Adjuster Apple UI */
-    .time-adjuster {
-      background: rgba(20, 20, 22, 0.4);
-      padding: 16px 20px;
-      border-radius: 20px;
-      margin-bottom: 24px;
-      box-shadow: inset 0 0 0 1px var(--glass-border);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    .time-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .time-title { font-weight: 600; font-size: 15px; color: var(--text-main); }
-    .time-val { font-weight: 700; color: var(--apple-blue); font-size: 16px; background: rgba(10, 132, 255, 0.15); padding: 4px 10px; border-radius: 12px; box-shadow: inset 0 0 0 1px rgba(10,132,255,0.3); }
-    
-    input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-    input[type=range]:focus { outline: none; }
-    input[type=range]::-webkit-slider-runnable-track {
-      width: 100%; height: 6px; cursor: pointer;
-      background: rgba(255,255,255,0.2); border-radius: 4px;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
-    }
-    input[type=range]::-webkit-slider-thumb {
-      height: 24px; width: 24px; border-radius: 50%;
-      background: #fff; cursor: pointer; -webkit-appearance: none;
-      margin-top: -9px; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    }
 
     .tab-row { 
       display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; 
@@ -250,7 +223,6 @@
     .b-unit { background: rgba(10, 132, 255, 0.15); color: #64d2ff; border-color: rgba(10, 132, 255, 0.3); }
     .b-skim { background: rgba(142, 142, 147, 0.15); color: #d1d1d6; border-color: rgba(142, 142, 147, 0.3); }
     .b-red { background: rgba(255, 69, 58, 0.2); color: #ff6961; border-color: rgba(255, 69, 58, 0.5); }
-    .b-orange { background: rgba(255, 159, 10, 0.2); color: #ff9f0a; border-color: rgba(255, 159, 10, 0.4); }
     
     .tip-box { 
       margin-top: 24px; 
@@ -281,7 +253,6 @@
       .summary-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
       .sum-card { padding: 20px; }
       .sum-num { font-size: 32px; }
-      .time-adjuster { padding: 16px; margin-bottom: 20px; }
       .tab-row { width: 100%; justify-content: center; }
       .tab { flex: 1; text-align: center; padding: 10px; }
       .day-card { border-radius: 20px; }
@@ -321,7 +292,7 @@
 <body>
 
 <div class="wrap">
-  <h2 class="sr-only">Final 2-Day Exam Preparation Plan</h2>
+  <h2 class="sr-only">Final 2-Day Exam Preparation Plan for Information Security Administration</h2>
   <div class="top-bar">
     <h2>Information Security Administration</h2>
     <div class="legend">
@@ -335,14 +306,6 @@
     <div class="sum-card"><div class="sum-num" style="color:var(--apple-green);">2</div><div class="sum-lbl">Study Days Left</div></div>
     <div class="sum-card"><div class="sum-num" id="sum_completed_hrs" style="color:var(--apple-blue);">0</div><div class="sum-lbl">Hours Completed</div></div>
     <div class="sum-card"><div class="sum-num" id="sum_hot_topics" style="color:var(--apple-red);">9</div><div class="sum-lbl">Hot Topics Left</div></div>
-  </div>
-
-  <div class="time-adjuster" id="time_adjuster_box">
-    <div class="time-header">
-      <span class="time-title">Realistically, how much time do you have to study tonight?</span>
-      <span class="time-val" id="time_val_disp">4.0 hrs</span>
-    </div>
-    <input type="range" id="time_slider" min="0.5" max="6" step="0.5" value="4.0" oninput="updateTimeSlider(this.value)" onchange="applyTimeFilter(this.value)">
   </div>
 
   <div class="tab-row">
@@ -374,89 +337,36 @@ const allTopics = [
 // LocalStorage State Management
 let appStartDate = localStorage.getItem('isa_start_date');
 if (!appStartDate) {
-  appStartDate = new Date().toDateString(); 
+  appStartDate = new Date().toDateString(); // Logs the exact day the student opened it.
   localStorage.setItem('isa_start_date', appStartDate);
 }
 // Checks if it is visually "Tomorrow" relative to when they started
 const isTomorrow = new Date().toDateString() !== appStartDate;
 let completedTopics = JSON.parse(localStorage.getItem('isa_completed') || '{}');
 
-// For the slider UI memory
-let savedHours = localStorage.getItem('isa_hours_today');
-if (!savedHours) {
-    savedHours = 4.0;
-    localStorage.setItem('isa_hours_today', savedHours);
-}
+// Build the Sessions
+let sessionsMap = {
+  1: { num: "01", title: "Today's Core Targets", sub: "Most Repeated Exam Topics (3-4 hrs)", hrs: "3–4 hrs", textColor: "var(--apple-red)", tag: "high", progressColor: "var(--apple-red)", tip: "You only have 3-4 hours tonight! DO NOT read full notes. Focus entirely on NAT/PAT differences, Firewall types, and Login policies. These are guaranteed questions.", topics: [] },
+  2: { num: "02", title: "Tomorrow: Morning Session", sub: "Servers & LAN Security", hrs: "4 hrs", textColor: "var(--apple-blue)", tag: "rev", progressColor: "var(--apple-blue)", tip: "Knock out the Servers early. You have a full PPT on Proxy types—study all of them. Then finish LAN network segmentation.", topics: [] },
+  3: { num: "03", title: "Tomorrow: Afternoon Session", sub: "Quick Reads & Full Revision", hrs: "3-4 hrs", textColor: "var(--apple-orange)", tag: "rev", progressColor: "var(--apple-orange)", tip: "Spend 1 hour skimming Unit 1 & 4 basics. After that, spend 2-3 hours practicing writing 2-line answers for EVERYTHING to lock it into memory.", topics: [] }
+};
 
-let currentFilter = 'all';
-let days = [];
+// Populate the sessions and handle auto carry-over
+allTopics.forEach(t => {
+  let targetSession = t.session;
+  
+  // Magic: If it's officially "Tomorrow" and a Day 1 task is incomplete, move it!
+  if (isTomorrow && targetSession === 1 && !completedTopics[t.id]) {
+     targetSession = 2;
+     t.badges.push('b-red');
+     t.badgeLabels.push('Missed Yesterday');
+  }
 
-function buildSessions() {
-    let sessionsMap = {
-      1: { num: "01", title: "Today's Core Targets", sub: "Most Repeated Exam Topics", textColor: "var(--apple-red)", tag: "high", progressColor: "var(--apple-red)", tip: "DO NOT read full notes. Focus entirely on basics. These are guaranteed questions.", topics: [] },
-      2: { num: "02", title: "Tomorrow: Morning Session", sub: "Servers & LAN Security", textColor: "var(--apple-blue)", tag: "rev", progressColor: "var(--apple-blue)", tip: "Knock out the Servers early. You have a full PPT on Proxy types—study all of them. Then finish LAN network segmentation.", topics: [] },
-      3: { num: "03", title: "Tomorrow: Afternoon Session", sub: "Quick Reads & Full Revision", textColor: "var(--apple-orange)", tag: "rev", progressColor: "var(--apple-orange)", tip: "Spend 1 hour skimming. After that, spend 2-3 hours practicing writing 2-line answers for EVERYTHING to lock it into memory.", topics: [] }
-    };
+  sessionsMap[targetSession].topics.push(t);
+});
 
-    let timeLeftToday = parseFloat(localStorage.getItem('isa_hours_today')) || 4.0;
-    
-    // Set slider visuals
-    const slider = document.getElementById('time_slider');
-    const valDisp = document.getElementById('time_val_disp');
-    if(slider && valDisp) {
-        slider.value = timeLeftToday;
-        valDisp.innerText = timeLeftToday + (timeLeftToday === 1 ? " hr" : " hrs");
-    }
-
-    let currentTodayHrs = 0;
-    // Deep copy topics so we can inject dynamic badges without breaking the original state
-    let topicsCopy = JSON.parse(JSON.stringify(allTopics)); 
-
-    topicsCopy.forEach(t => {
-      let targetSession = t.session;
-      
-      // AUTO-BALANCING ALGORITHM
-      if (targetSession === 1) {
-          if (currentTodayHrs + t.estHrs <= timeLeftToday) {
-              // Fits in the schedule tonight!
-              currentTodayHrs += t.estHrs;
-          } else {
-              // Doesn't fit in the remaining time, reschedule!
-              targetSession = 2;
-              t.badges.push('b-orange');
-              t.badgeLabels.push("Moved: Time Limit");
-          }
-      }
-    
-      // Magic Rollover algorithm: if it's legally tomorrow, Day 1 tasks shouldn't be missed.
-      if (isTomorrow && targetSession === 1 && !completedTopics[t.id]) {
-         targetSession = 2;
-         t.badges.push('b-red');
-         t.badgeLabels.push('Missed Yesterday');
-      }
-
-      sessionsMap[targetSession].topics.push(t);
-    });
-
-    // Remove empty sessions
-    days = Object.values(sessionsMap).filter(s => s.topics.length > 0);
-    
-    // Dynamically calculate "hrs" display for each session based on topics that were assigned to it
-    days.forEach(d => {
-        let total = d.topics.reduce((sum, t) => sum + t.estHrs, 0);
-        d.hrs = total + (total === 1 ? ' hr' : ' hrs');
-    });
-}
-
-function updateTimeSlider(val) {
-    document.getElementById('time_val_disp').innerText = val + (val === "1" ? " hr" : " hrs");
-}
-
-function applyTimeFilter(val) {
-    localStorage.setItem('isa_hours_today', val);
-    buildSessions();
-    renderDays(currentFilter);
-}
+// Remove empty sessions
+const days = Object.values(sessionsMap).filter(s => s.topics.length > 0);
 
 function updateSummaryTopStats() {
   let totalHigh = allTopics.filter(t => t.prio === 'high').length;
@@ -482,7 +392,6 @@ function calculateProgress(session) {
 }
 
 function renderDays(filter) {
-  currentFilter = filter; // Remember what filter we are on
   const container = document.getElementById('days-container');
   container.innerHTML = '';
   
@@ -536,19 +445,12 @@ function renderDays(filter) {
       </div>`;
       
     container.appendChild(card);
+    
+    // Store target progress
     card.dataset.progress = currentProgress;
   });
   
   updateSummaryTopStats();
-  
-  // Highlight active tab visually
-  const tabs = document.querySelectorAll('.tab');
-  if(tabs.length === 3) {
-      tabs.forEach(t => t.classList.remove('active'));
-      if(filter === 'all') tabs[0].classList.add('active');
-      if(filter === 'high') tabs[1].classList.add('active');
-      if(filter === 'rev') tabs[2].classList.add('active');
-  }
 }
 
 function toggleTopic(id, sessionNum) {
@@ -580,6 +482,7 @@ function toggleTopic(id, sessionNum) {
       }
   }
 
+  // Update top numeric stats completely globally
   updateSummaryTopStats();
 }
 
@@ -615,14 +518,12 @@ function toggleDay(header) {
 
 function filterDays(filter, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  if(el) el.classList.add('active');
+  el.classList.add('active');
   renderDays(filter);
 }
 
-// Initial paint pipeline
-buildSessions();
+// Initial paint
 renderDays('all');
-
 </script>
 </body>
 </html>
